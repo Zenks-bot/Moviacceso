@@ -16,9 +16,9 @@ do $$
 declare v int;
 begin
   select count(*) into v from public.graph_edges;
-  if v <> 26 then raise exception 'FALLO: anon debería leer 26 segmentos, leyó %', v; end if;
+  if v < 50 then raise exception 'FALLO: anon debería leer los segmentos del piloto, leyó %', v; end if;
   select count(*) into v from public.places;
-  if v <> 8 then raise exception 'FALLO: anon debería leer 8 lugares, leyó %', v; end if;
+  if v < 3 then raise exception 'FALLO: anon debería leer los lugares del piloto, leyó %', v; end if;
 
   select count(*) into v from public.reports;
   if v <> 4 then raise exception 'FALLO: anon debería ver solo 4 reportes públicos (aprobados/resueltos), vio %', v; end if;
@@ -64,9 +64,17 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', true) \gset ignored_
 do $$
-declare r record;
+declare r record; v_edge text; v_lat double precision; v_lng double precision;
 begin
-  select * into r from public.submit_report('rampa_obstruida', 'Rampa bloqueada por un puesto ambulante en la esquina.', 4::smallint, -9.93025, -76.23883, 'e-h-r2c2');
+  -- Tramo real del grafo, al sureste del centro, para comprobar también la asignación de zona.
+  select e.id, (e.geometry->'coordinates'->0->>1)::float8, (e.geometry->'coordinates'->0->>0)::float8
+    into v_edge, v_lat, v_lng
+    from public.graph_edges e, public.pilot_zones z
+   where z.id = 'z-se'
+     and (e.geometry->'coordinates'->0->>1)::float8 between z.min_lat and z.max_lat - 0.0003
+     and (e.geometry->'coordinates'->0->>0)::float8 between z.min_lng + 0.0003 and z.max_lng
+   order by e.id limit 1;
+  select * into r from public.submit_report('rampa_obstruida', 'Rampa bloqueada por un puesto ambulante en la esquina.', 4::smallint, v_lat, v_lng, v_edge);
   if r.id is null then raise exception 'FALLO: submit_report no devolvió identificador'; end if;
   if not exists (select 1 from public.reports where id = r.id and moderation_status = 'pendiente') then
     raise exception 'FALLO: el autor no ve su propio reporte pendiente';

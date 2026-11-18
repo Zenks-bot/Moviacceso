@@ -150,3 +150,20 @@ export interface ReportStatusHistoryEntry {
 }
 
 export const isSimulated = (source: SourceType): boolean => source === 'simulado';
+
+/** Zona del piloto usada para estadísticas y para validar la ubicación de los reportes. */
+export interface PilotZone { id: string; name: string; minLat: number; maxLat: number; minLng: number; maxLng: number }
+
+/** Conjunto del piloto generado por scripts/build-pilot.ts a partir de OpenStreetMap. */
+export interface PilotDataset {
+  generatedFrom: string;
+  center: LatLng;
+  zones: PilotZone[];
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  places: Place[];
+  /** Par de lugares donde la ruta general cruza una barrera y la adaptada la evita (para la demostración). */
+  scenario: { originId: string; destinationId: string } | null;
+  /** Tramos con evidencia oficial (no simulada). */
+  officialEdgeIds: string[];
+}

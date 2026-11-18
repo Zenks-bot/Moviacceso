@@ -52,7 +52,7 @@ function ClickHandler({ onPick }: { onPick: (p: LatLng) => void }) {
   return null;
 }
 
-/** Encuadre inicial: todo el piloto visible, con margen para que ningún marcador quede bajo los controles. */
+/** Encuadre inicial: todos los destinos visibles, con margen para que ningún marcador quede bajo los controles. */
 function InitialFit({ points }: { points: [number, number][] }) {
   const map = useMap();
   useEffect(() => {
@@ -186,7 +186,7 @@ export function MapView({ dataset, label, route, reports = [], selected, onSelec
 
           {pickedPoint ? <Marker position={[pickedPoint.lat, pickedPoint.lng]} icon={pickIcon} title="Ubicación seleccionada para el reporte" /> : null}
           {onPick ? <ClickHandler onPick={onPick} /> : null}
-          <InitialFit points={dataset.nodes.map((n) => [n.lat, n.lng] as [number, number])} />
+          <InitialFit points={(dataset.places.length > 1 ? dataset.places : dataset.nodes).map((n) => [n.lat, n.lng] as [number, number])} />
           <FocusController target={focusTarget} />
         </MapContainer>
       </div>

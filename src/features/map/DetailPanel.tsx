@@ -36,7 +36,16 @@ export function EdgeDetails({ edge, reports }: { edge: GraphEdge; reports: Publi
         <Row term="Rampas">{RAMP_LABELS[edge.rampStatus]}</Row>
         <Row term="Obstáculos">{BARRIER_LABELS[edge.barrierType]}</Row>
         <Row term="Superficie">{SURFACE_LABELS[edge.surfaceType]}</Row>
-        <Row term="Fuente">{edge.sourceUrl ? <a href={edge.sourceUrl} target="_blank" rel="noreferrer">{SOURCE_LABELS[edge.sourceType]}</a> : SOURCE_LABELS[edge.sourceType]}</Row>
+        <Row term="Fuente del estado">
+          {edge.sourceUrl && !edge.sourceUrl.includes('openstreetmap.org') ? (
+            <a href={edge.sourceUrl} target="_blank" rel="noreferrer">{SOURCE_LABELS[edge.sourceType]} (se abre en una pestaña nueva)</a>
+          ) : (
+            SOURCE_LABELS[edge.sourceType]
+          )}
+        </Row>
+        {edge.sourceUrl?.includes('openstreetmap.org') ? (
+          <Row term="Geometría"><a href={edge.sourceUrl} target="_blank" rel="noreferrer">OpenStreetMap (se abre en una pestaña nueva)</a></Row>
+        ) : null}
         <Row term="Fecha de verificación">{formatDate(edge.verifiedAt)}{simulated && edge.verifiedAt ? ' (fecha ficticia)' : ''}</Row>
         {edge.notes ? <Row term="Notas">{edge.notes}</Row> : null}
         <Row term="Reportes publicados">{related.length === 0 ? 'Ninguno' : `${related.length} (ver lista de reportes)`}</Row>
@@ -58,7 +67,7 @@ export function PlaceDetails({ place }: { place: Place }) {
       <dl>
         <Row term="Tipo">{PLACE_CATEGORY_LABELS[place.category]}</Row>
         <Row term="Rampas">{RAMP_LABELS[place.rampStatus]}</Row>
-        <Row term="Fuente">{SOURCE_LABELS[place.sourceType]}</Row>
+        <Row term="Fuente">{place.sourceUrl ? <a href={place.sourceUrl} target="_blank" rel="noreferrer">{SOURCE_LABELS[place.sourceType]} (se abre en una pestaña nueva)</a> : SOURCE_LABELS[place.sourceType]}</Row>
         <Row term="Fecha de verificación">{formatDate(place.verifiedAt)}{simulated && place.verifiedAt ? ' (fecha ficticia)' : ''}</Row>
         <Row term="Conexión al grafo">{place.nodeId ? 'Sí' : 'No registrada: no se pueden calcular trayectos'}</Row>
       </dl>

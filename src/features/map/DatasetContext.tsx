@@ -34,7 +34,12 @@ export function DatasetProvider({ children }: { children: ReactNode }) {
   }, [attempt]);
 
   const reload = useCallback(() => setAttempt((n) => n + 1), []);
-  const useLocalDemo = useCallback(() => setState({ status: 'ready', dataset: buildDemoDataset() }), []);
+  const useLocalDemo = useCallback(() => {
+    setState({ status: 'loading' });
+    buildDemoDataset()
+      .then((dataset) => setState({ status: 'ready', dataset }))
+      .catch((err: unknown) => setState({ status: 'error', error: toAppError(err) }));
+  }, []);
   const value = useMemo(() => ({ state, reload, useLocalDemo }), [state, reload, useLocalDemo]);
   return <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>;
 }

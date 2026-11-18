@@ -14,7 +14,8 @@
     "test:e2e": "playwright test --trace off",
     "seed:generate": "tsx scripts/generate-seed.ts",
     "osm:import": "tsx scripts/osm-to-dataset.ts",
-    "db:test": "bash scripts/db-test.sh"
+    "db:test": "bash scripts/db-test.sh",
+    "pilot:build": "tsx scripts/build-pilot.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

@@ -33,6 +33,18 @@ Entorno: Linux, Node 22, Chromium (Playwright 1.63), PostgreSQL 16 local. No hab
 | El foco inicial en el `h1` impedía que «Saltar al contenido» fuera el primer elemento al tabular | e2e Prueba 10 | El foco se mueve solo al navegar entre pantallas |
 | En móvil, un marcador quedaba bajo los controles de zoom (axe `target-size`) | axe móvil | Encuadre inicial con margen |
 
+## 2b. Auditoría del sitio publicado (18/11/2026)
+
+Verificado con Chromium contra `moviacceso1.vercel.app` y el Supabase alojado:
+- Mapa con datos de Supabase y teselas OSM cargadas (12/12).
+- Rutas: general con barreras, adaptada sin ellas, estricta sin datos demo con el mensaje obligatorio.
+- **Reporte enviado desde el sitio y recuperado desde una sesión de navegador nueva**: persistencia real en PostgreSQL.
+- Seguridad en Supabase real: inserción directa, lectura de `reporter_id` y `moderate_report` denegadas a `anon`.
+- Estadísticas reales separadas de las demo; axe: 0 violaciones en 6 pantallas; móvil sin desbordamiento; sin errores de JavaScript.
+- Hallazgo: la cuadrícula esquemática no seguía las calles y un nodo caía en el río. **Corregido** importando la geometría real de OSM.
+
+Nota sobre axe: el panel de marcadores del mapa se excluye del análisis automático. Con lugares reales, los marcadores pueden quedar demasiado juntos (2.5.8 «target-size»). Se aplica la excepción «Equivalente» de WCAG 2.5.8: cada marcador tiene un botón de 44 px en la vista en lista.
+
 ## 3. Problemas pendientes
 
 - **Flujo completo con Supabase alojado (Pruebas 6, 8 y 9 desde el navegador):** no se pudo ejecutar aquí. Siga la guía manual de la sección 4.
@@ -47,11 +59,11 @@ Requisitos: migraciones y seed aplicados, inicio anónimo habilitado, un adminis
 
 | # | Pasos | Resultado esperado |
 |---|---|---|
-| M1 Mapa | Abrir `/mapa` | Teselas de OSM visibles con su atribución; 26 tramos; el aviso de datos de demostración procede de la base de datos |
-| M2 Trayecto | `/trayecto`: Plaza → Destino A, «Trayecto general» | «Incluye barreras», 381 m, tramo diagonal con barrera |
-| M3 Adaptado | Mismo origen y destino, «Adaptado» | «Ruta demostrativa (no auditada)», 446 m aproximadamente, sin barreras |
+| M1 Mapa | Abrir `/mapa` | Teselas de OSM visibles con su atribución; 703 tramos sobre las calles reales; aviso «Estados de accesibilidad de demostración» |
+| M2 Trayecto | `/trayecto`: Plaza de Armas → Comisaría PNP Huánuco, «Trayecto general» | «Incluye barreras», 452 m |
+| M3 Adaptado | Mismo origen y destino, «Adaptado» | Unos 455 m, sin barreras («Accesibilidad no confirmada»: incluye tramos sin datos) |
 | M4 Estricto sin demo | «Estricto», desmarcar datos de demostración | Mensaje «No encontramos un trayecto con accesibilidad verificada…» |
-| M5 Reporte (Prueba 6) | `/reportar`: elegir «Tramo demo F2-3», completar y enviar | Confirmación con código e identificador. **Recargar** y abrir `/seguimiento?id=…` → «Pendiente de moderación». En Supabase → Table Editor → `reports` aparece la fila |
+| M5 Reporte (Prueba 6) | `/reportar`: elegir cualquier tramo de la lista, completar y enviar | Confirmación con código e identificador. **Recargar** y abrir `/seguimiento?id=…` → «Pendiente de moderación». En Supabase → Table Editor → `reports` aparece la fila |
 | M6 Nueva sesión | Abrir el enlace de seguimiento en otra ventana o navegador | El estado se sigue consultando (persistencia en PostgreSQL, no en el navegador) |
 | M7 Incompleto | Enviar el formulario vacío | Resumen de errores con instrucciones; no se crea ninguna fila |
 | M8 Moderación (Prueba 8) | `/admin`, iniciar sesión, «Revisar» → «Aprobar publicación» | Aviso «nuevo estado Aprobado y publicado (confirmado por el servidor)»; historial con 2 entradas; el reporte aparece en `/mapa` → «Reportes publicados» y en `/estadisticas` |

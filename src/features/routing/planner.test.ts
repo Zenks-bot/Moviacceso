@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildDemoDataset } from '../../data/demo-dataset';
+import full from '../../data/pilot-dataset.json';
+import { DEMO_SCENARIO, OFFICIAL_EDGE_IDS, toMobilityDataset } from '../../data/demo-dataset';
+import type { PilotDataset } from '../../types/domain';
 import type { GraphEdge, GraphNode, Place } from '../../types/domain';
 import { buildGraph } from './graph';
 import { dijkstra } from './dijkstra';
@@ -129,39 +131,55 @@ describe('RoutePlanner — reglas de evidencia', () => {
   });
 });
 
-describe('Escenarios del conjunto de demostración', () => {
-  const ds = buildDemoDataset();
+describe('Conjunto del piloto (geometría OSM, estados simulados)', () => {
+  const ds = toMobilityDataset(full as unknown as PilotDataset);
   const p = new RoutePlanner(ds);
+  const official = new Set(OFFICIAL_EDGE_IDS);
 
-  it('todos los elementos están marcados como simulados', () => {
-    expect(ds.edges.every((e) => e.sourceType === 'simulado')).toBe(true);
-    expect(ds.places.every((x) => x.sourceType === 'simulado')).toBe(true);
+  it('los estados de los tramos son simulados salvo los tramos con fuente oficial', () => {
+    expect(ds.edges.length).toBeGreaterThan(50);
+    for (const e of ds.edges) expect(e.sourceType).toBe(official.has(e.id) ? 'oficial' : 'simulado');
   });
 
-  it('Plaza → Destino A: la ruta general cruza una barrera; la adaptada la evita', () => {
-    const general = p.plan('p-plaza', 'p-salud', { profile: 'general', includeDemoData: true });
-    const adaptada = p.plan('p-plaza', 'p-salud', { profile: 'movilidad_reducida', includeDemoData: true });
+  it('los lugares provienen de OSM y su accesibilidad no se declara verificada', () => {
+    expect(ds.places.length).toBeGreaterThan(3);
+    for (const x of ds.places) {
+      expect(x.sourceType).toBe('osm');
+      expect(x.accessibilityStatus).toBe('informacion_insuficiente');
+      expect(x.sourceUrl).toMatch(/^https:\/\/www\.openstreetmap\.org\//);
+    }
+  });
+
+  it('todos los segmentos referencian nodos existentes y tienen longitud positiva', () => {
+    const ids = new Set(ds.nodes.map((n) => n.id));
+    for (const e of ds.edges) {
+      expect(ids.has(e.sourceNodeId) && ids.has(e.targetNodeId)).toBe(true);
+      expect(e.lengthM).toBeGreaterThan(0);
+    }
+  });
+
+  it('existe un escenario donde la ruta general cruza una barrera y la adaptada la evita', () => {
+    expect(DEMO_SCENARIO).not.toBeNull();
+    const { originId, destinationId } = DEMO_SCENARIO!;
+    const general = p.plan(originId, destinationId, { profile: 'general', includeDemoData: true });
+    const adaptada = p.plan(originId, destinationId, { profile: 'movilidad_reducida', includeDemoData: true });
     if (general.kind !== 'found' || adaptada.kind !== 'found') throw new Error('esperaba rutas');
     expect(general.verdict).toBe('con_barreras');
-    expect(adaptada.segments.some((s) => s.effectiveStatus === 'barrera_verificada')).toBe(false);
-    expect(adaptada.totalLengthM).toBeGreaterThan(general.totalLengthM);
+    expect(adaptada.segments.some((x) => x.effectiveStatus === 'barrera_verificada')).toBe(false);
+    expect(adaptada.totalLengthM).toBeGreaterThanOrEqual(general.totalLengthM);
   });
 
-  it('Plaza → Destino A estricto: solo demostrativo con datos demo; sin ellos no hay ruta verificada', () => {
-    const demo = p.plan('p-plaza', 'p-salud', { profile: 'estricto', includeDemoData: true });
-    expect(demo.kind === 'found' && demo.verdict).toBe('demostrativa');
-    expect(p.plan('p-plaza', 'p-salud', { profile: 'estricto', includeDemoData: false }).kind).toBe('not_found');
+  it('sin datos de demostración no hay ninguna ruta verificada (no existe evidencia real de accesibilidad)', () => {
+    const { originId, destinationId } = DEMO_SCENARIO!;
+    expect(p.plan(originId, destinationId, { profile: 'estricto', includeDemoData: false }).kind).toBe('not_found');
   });
 
-  it('Paradero 1 → Mercado estricto: no hay ruta verificada ni siquiera con datos demo', () => {
-    expect(p.plan('p-paradero-1', 'p-mercado', { profile: 'estricto', includeDemoData: true }).kind).toBe('not_found');
-    const r = p.plan('p-paradero-1', 'p-mercado', { profile: 'movilidad_reducida', includeDemoData: true });
-    expect(r.kind === 'found' && r.verdict).toBe('sin_confirmar');
-  });
-
-  it('Destino E está desconectado en todos los perfiles', () => {
-    for (const profile of ['general', 'movilidad_reducida', 'estricto'] as const) {
-      expect(p.plan('p-plaza', 'p-aislado', { profile, includeDemoData: true }).kind).toBe('not_found');
+  it('los tramos oficiales (Contraloría) siguen siendo barrera aunque se desactiven los datos demo', () => {
+    for (const id of OFFICIAL_EDGE_IDS) {
+      const e = ds.edges.find((x) => x.id === id)!;
+      expect(e.accessibilityStatus).toBe('barrera_verificada');
+      expect(e.verifiedAt).toBeTruthy();
+      expect(e.sourceUrl).toMatch(/contraloria/);
     }
   });
 });

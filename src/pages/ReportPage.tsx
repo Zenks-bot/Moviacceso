@@ -128,7 +128,7 @@ function ReportForm({ dataset }: { dataset: MobilityDataset }) {
             <label htmlFor={f('edge')} className="field-label">Elegir un tramo de la lista (alternativa accesible al mapa)</label>
             <select id={f('edge')} className="field-input" value={edgeId ?? ''} onChange={(e) => pickEdge(e.target.value)}>
               <option value="">— Sin tramo asociado / marcar en el mapa —</option>
-              {dataset.edges.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
+              {[...dataset.edges].sort((a, b) => a.name.localeCompare(b.name, 'es')).map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
             </select>
           </div>
           <MapView dataset={dataset} label="Mapa para marcar la ubicación del obstáculo" pickedPoint={picked} onPick={pickPoint} className="h-[340px]" />

@@ -23,18 +23,26 @@ export function DatasetGate({ children }: { children: (dataset: MobilityDataset)
 }
 
 export function DatasetOriginNotice({ dataset }: { dataset: MobilityDataset }) {
-  const allSimulated = dataset.edges.length > 0 && dataset.edges.every((e) => e.sourceType === 'simulado');
+  const simulated = dataset.edges.filter((e) => e.sourceType === 'simulado').length;
+  const real = dataset.edges.length - simulated;
   if (dataset.origin === 'local-demo') {
     return (
       <Alert variant="demo" title="Datos de demostración locales (sin conexión a la base de datos)">
-        <p>Se muestran datos simulados incluidos en la aplicación. No describen el estado real de la infraestructura de Huánuco.</p>
+        <p>
+          Se muestra el conjunto incluido en la aplicación: calles y lugares reales de OpenStreetMap con estados de accesibilidad simulados
+          ({simulated} de {dataset.edges.length} tramos). No describen la condición real de las veredas.
+        </p>
       </Alert>
     );
   }
-  if (allSimulated) {
+  if (simulated > 0) {
     return (
-      <Alert variant="demo" title="Datos de demostración">
-        <p>Los segmentos y lugares cargados desde la base de datos están marcados como simulados. No describen el estado real de la infraestructura.</p>
+      <Alert variant="demo" title="Estados de accesibilidad de demostración">
+        <p>
+          Calles y lugares provienen de OpenStreetMap, pero el estado de accesibilidad de {simulated} de {dataset.edges.length} tramos es
+          simulado y no describe la condición real de la vía.
+          {real > 0 ? ` ${real} tramo${real === 1 ? '' : 's'} cuenta${real === 1 ? '' : 'n'} con una fuente real (por ejemplo, un informe oficial).` : ''}
+        </p>
       </Alert>
     );
   }

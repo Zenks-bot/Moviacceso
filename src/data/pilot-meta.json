@@ -1,0 +1,48 @@
+{
+  "generatedFrom": "OpenStreetMap, API 0.6 (https://api.openstreetmap.org/api/0.6/map.json?bbox=-76.2455,-9.9355,-76.234,-9.924), descargado el 18/11/2026",
+  "center": {
+    "lat": -9.929478,
+    "lng": -76.239845
+  },
+  "zones": [
+    {
+      "id": "z-no",
+      "name": "Sector piloto noroeste",
+      "minLat": -9.929478,
+      "maxLat": -9.915984,
+      "minLng": -76.250951,
+      "maxLng": -76.239845
+    },
+    {
+      "id": "z-ne",
+      "name": "Sector piloto noreste",
+      "minLat": -9.929478,
+      "maxLat": -9.915984,
+      "minLng": -76.239845,
+      "maxLng": -76.231521
+    },
+    {
+      "id": "z-so",
+      "name": "Sector piloto suroeste",
+      "minLat": -9.941405,
+      "maxLat": -9.929478,
+      "minLng": -76.250951,
+      "maxLng": -76.239845
+    },
+    {
+      "id": "z-se",
+      "name": "Sector piloto sureste",
+      "minLat": -9.941405,
+      "maxLat": -9.929478,
+      "minLng": -76.239845,
+      "maxLng": -76.231521
+    }
+  ],
+  "scenario": {
+    "originId": "p-osm-w237278002",
+    "destinationId": "p-osm-w625687519"
+  },
+  "officialEdgeIds": [
+    "osm-w349499854-5"
+  ]
+}

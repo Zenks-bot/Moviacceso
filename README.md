@@ -6,7 +6,7 @@ MoviAcceso centraliza información sobre barreras de movilidad en un sector pilo
 
 Proyecto preparado en el marco del World Engineering Day Hackathon 2027 («Engineering Sustainable Transport Solutions for People, Planet and Prosperity»). No afirmamos que cumpla un desafío oficial específico sin haber contrastado antes su enunciado.
 
-> ⚠️ **Datos de demostración.** El grafo y los lugares incluidos son **simulados** y se muestran así en toda la interfaz. La geometría es una cuadrícula esquemática alrededor de una coordenada aproximada de la Plaza de Armas; no describe el estado real de ninguna vereda, rampa o paradero. Consulte [docs/research.md](docs/research.md).
+> ⚠️ **Qué es real y qué no.** Las **calles y los 18 destinos** del piloto son **reales**, importados de OpenStreetMap (492 intersecciones, 703 tramos alrededor de la Plaza de Armas). El **estado de accesibilidad** de 702 tramos es **simulado** y se identifica así en toda la interfaz. Un tramo del Jr. San Martín tiene **evidencia oficial**: el hallazgo de la Contraloría de 2023, con ubicación aproximada. Consulte [docs/research.md](docs/research.md).
 
 ## Funcionalidades implementadas
 
@@ -145,7 +145,7 @@ docs/                  Documentación
 
 ## Limitaciones conocidas
 
-- **Datos simulados.** Ningún tramo ha sido inspeccionado en campo. La cuadrícula es esquemática y puede no coincidir con las calles del mapa base. Use `npm run osm:import` para incorporar geometría real.
+- **Estados simulados.** La geometría es real (OSM), pero ningún tramo ha sido inspeccionado en campo por el equipo; los estados de accesibilidad son simulados salvo el tramo documentado por la Contraloría. Para regenerar el piloto desde OSM: `npm run pilot:build -- --download`, luego `npm run seed:generate`.
 - **Verificación de extremo a extremo con Supabase alojado.** El entorno de desarrollo no tenía acceso a un proyecto Supabase ni a Docker. La lógica SQL (RLS, funciones, persistencia entre transacciones) se verificó en PostgreSQL 16 con un stub del esquema `auth`. El flujo navegador → Supabase alojado debe comprobarse con la guía manual de `docs/testing.md` (pruebas 6, 8 y 9).
 - **Mapa base.** Desde el entorno de desarrollo no se pudieron descargar teselas, así que solo se comprobó el mensaje de error de teselas no disponibles. En un navegador con internet se cargan las teselas de OSM.
 - **Accesibilidad digital.** Se comprobó con axe-core (sin violaciones en 9 pantallas, escritorio y móvil) y con pruebas de teclado. **No** se ha hecho una auditoría WCAG 2.2 completa ni pruebas con lectores de pantalla y usuarios reales; no se declara conformidad.

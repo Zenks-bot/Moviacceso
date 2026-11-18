@@ -27,12 +27,12 @@ function verdictStyle(verdict: string): string {
 function RouteSearch({ dataset }: { dataset: MobilityDataset }) {
   const [params, setParams] = useSearchParams();
   const planner = useMemo(() => new RoutePlanner(dataset), [dataset]);
-  const allSimulated = dataset.edges.every((e) => e.sourceType === 'simulado');
+  const hasSimulated = dataset.edges.some((e) => e.sourceType === 'simulado');
 
   const [origin, setOrigin] = useState(params.get('o') ?? '');
   const [destination, setDestination] = useState(params.get('d') ?? '');
   const [profile, setProfile] = useState<RouteProfile>(isProfile(params.get('p')) ? (params.get('p') as RouteProfile) : 'movilidad_reducida');
-  const [includeDemo, setIncludeDemo] = useState(params.has('demo') ? params.get('demo') === '1' : allSimulated);
+  const [includeDemo, setIncludeDemo] = useState(params.has('demo') ? params.get('demo') === '1' : hasSimulated);
   const [errors, setErrors] = useState<FormErrors>({});
   const resultHeading = useRef<HTMLHeadingElement>(null);
   const ids = { origin: useId(), destination: useId(), demo: useId() };

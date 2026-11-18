@@ -27,7 +27,7 @@ export const ACCESSIBILITY_SHORT: Record<AccessibilityStatus, string> = {
 };
 
 export const SOURCE_LABELS: Record<SourceType, string> = {
-  osm: 'Geometría de OpenStreetMap',
+  osm: 'OpenStreetMap (ubicación; accesibilidad sin verificar)',
   inspeccion: 'Inspección en campo',
   oficial: 'Fuente oficial',
   comunitario: 'Aporte ciudadano',

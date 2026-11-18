@@ -42,7 +42,8 @@ export function AboutPage() {
               (se abre en una pestaña nueva).
             </li>
           </ul>
-          <p className="mt-2 text-sm text-slate">Estas fuentes son antecedentes generales; no describen el estado de cada tramo del piloto.</p>
+          <p className="mt-2 text-sm">La Contraloría (8/5/2023) halló en las cuadras 16 y 17 del Jr. San Martín desniveles de 45 a 60 cm entre veredas y pavimento, y rampas para personas con discapacidad fuera de norma. El Conadis (8/1/2025) multó al Gobierno Regional de Huánuco con 11 UIT por falta de accesibilidad en sus sedes administrativas.</p>
+          <p className="mt-2 text-sm text-slate">Son antecedentes; no describen el estado actual de cada tramo del piloto.</p>
         </section>
 
         <section className="card lg:col-span-2" aria-labelledby="criterios">
@@ -87,9 +88,10 @@ export function AboutPage() {
         <section className="card" aria-labelledby="limites">
           <h2 id="limites" className="mb-2 text-xl font-bold">Limitaciones conocidas</h2>
           <ul className="list-disc space-y-1 pl-5">
-            <li>El grafo del piloto es una cuadrícula esquemática de demostración; no coincide necesariamente con las calles reales.</li>
-            <li>Ningún tramo ha sido inspeccionado en campo todavía.</li>
-            <li>Los puntos de parada mostrados no son paraderos oficiales.</li>
+            <li>Calles y lugares son reales (OpenStreetMap), pero el estado de accesibilidad de casi todos los tramos es simulado.</li>
+            <li>Solo un tramo del Jr. San Martín tiene evidencia oficial (Contraloría, 2023), con ubicación aproximada y sin confirmar su estado actual.</li>
+            <li>Ningún tramo ha sido inspeccionado en campo por el equipo todavía.</li>
+            <li>OSM no registra paradas urbanas de bus en el centro; solo se muestran terminales interprovinciales mapeados en OSM, no paraderos oficiales.</li>
             <li>No hay seguimiento de vehículos, navegación en tiempo real ni garantías de seguridad física.</li>
             <li>La accesibilidad digital se ha comprobado con herramientas automáticas y teclado, no con una auditoría WCAG completa.</li>
           </ul>

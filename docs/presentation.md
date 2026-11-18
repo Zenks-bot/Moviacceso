@@ -36,9 +36,9 @@
 Preparación: aplicación desplegada con Supabase, sesión de administración abierta en otra pestaña y un vídeo de respaldo grabado.
 
 1. **Abrir la aplicación**: página de inicio, mostrar el aviso de prototipo y pulsar «Explorar mapa». Señalar la leyenda (color, patrón y texto) y la vista en lista.
-2. **Seleccionar origen y destino**: «Buscar trayecto» → Plaza de Armas (referencia) → Destino demo A.
-3. **Consultar el trayecto**: «Trayecto general» muestra «Incluye barreras» (381 m). Cambiar a «Adaptado a movilidad reducida»: «Ruta demostrativa (no auditada)» (446 m), que evita la barrera.
-4. **Observar una barrera**: en el detalle, el tramo diagonal tiene «Barrera verificada · escalón», con fuente y fecha (ficticias, marcadas como demo). Activar «Estricto» y desmarcar los datos de demostración: aparece el mensaje «No encontramos un trayecto con accesibilidad verificada…».
+2. **Seleccionar origen y destino**: «Buscar trayecto» → Plaza de Armas → Comisaría PNP Huánuco (lugares reales de OSM).
+3. **Consultar el trayecto**: «Trayecto general» muestra «Incluye barreras» (452 m). Cambiar a «Adaptado a movilidad reducida»: unos 455 m, evita la barrera y advierte que hay tramos sin datos.
+4. **Observar una barrera**: en el mapa, abrir el tramo del Jr. San Martín con fuente oficial (Contraloría, 2023), que muestra enlace y fecha; compararlo con una barrera simulada, marcada como demo. Activar «Estricto» y desmarcar los datos de demostración: aparece el mensaje «No encontramos un trayecto con accesibilidad verificada…».
 5. **Registrar un reporte**: «Reportar barrera» → elegir un tramo de la lista → «Rampa obstruida» → descripción → dificultad 4 → aceptar las condiciones → «Enviar reporte». Mostrar el código de seguimiento.
 6. **Comprobar la persistencia**: recargar la página y abrir «Consultar el estado de este reporte»: «Pendiente de moderación», leído desde la base de datos.
 7. **Panel de administración**: en la pestaña de administración, filtrar «Pendiente», abrir «Revisar» → «Aprobar publicación». Mostrar el historial y explicar que moderar no es verificar. Volver a Estadísticas: el reporte aparece en las cifras **reales**, separadas de las de demostración.

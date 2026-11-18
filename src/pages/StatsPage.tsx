@@ -91,27 +91,34 @@ function NetworkCoverage({ dataset }: { dataset: MobilityDataset }) {
     const stops = dataset.places.filter((p) => p.category === 'paradero');
     return {
       total, realCount: real.length,
-      realVerifiedPct: total ? Math.round((real.filter((e) => e.accessibilityStatus === 'accesible_verificado' || e.accessibilityStatus === 'barrera_verificada').length / total) * 100) : 0,
+      realVerifiedPct: total ? (real.filter((e) => e.accessibilityStatus === 'accesible_verificado' || e.accessibilityStatus === 'barrera_verificada').length / total) * 100 : 0,
       byStatus, stops: stops.length, stopsConnected: stops.filter((p) => p.nodeId).length,
       length: dataset.edges.reduce((sum, e) => sum + e.lengthM, 0),
-      barriers: dataset.edges.filter((e) => e.accessibilityStatus === 'barrera_verificada').length,
+      barriersReal: real.filter((e) => e.accessibilityStatus === 'barrera_verificada').length,
+      barriersDemo: dataset.edges.filter((e) => e.sourceType === 'simulado' && e.accessibilityStatus === 'barrera_verificada').length,
     };
   }, [dataset]);
   const allDemo = m.realCount === 0;
+  const mostlyDemo = m.realCount < m.total;
   return (
     <section aria-labelledby="cobertura" className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <h2 id="cobertura" className="text-2xl font-bold">Cobertura de información del grafo piloto</h2>
-        {allDemo ? <DemoBadge /> : null}
+        {mostlyDemo ? <DemoBadge /> : null}
       </div>
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Segmentos con verificación real" value={`${m.realVerifiedPct}%`} />
+        <Kpi label="Segmentos con verificación real" value={`${m.realVerifiedPct.toLocaleString('es-PE', { maximumFractionDigits: 1 })} %`} />
         <Kpi label="Segmentos registrados" value={`${m.total} (${formatDistance(m.length)})`} />
-        <Kpi label="Barreras documentadas en el grafo" value={allDemo ? `${m.barriers} (demo)` : m.barriers} />
+        <Kpi label="Barreras con fuente real / simuladas" value={`${m.barriersReal} / ${m.barriersDemo}`} />
         <Kpi label="Puntos de parada conectados al grafo" value={`${m.stopsConnected} de ${m.stops}`} />
       </dl>
-      <BarList title={`Segmentos por estado registrado${allDemo ? ' (datos de demostración)' : ''}`} data={m.byStatus.map(({ s, n }) => ({ key: s, count: n }))} labelFor={(k) => `${STATUS_STYLE[k as keyof typeof STATUS_STYLE].symbol} ${ACCESSIBILITY_LABELS[k as keyof typeof ACCESSIBILITY_LABELS]}`} emptyText="Sin segmentos." />
+      <BarList title={`Segmentos por estado registrado${mostlyDemo ? ' (incluye estados simulados)' : ''}`} data={m.byStatus.map(({ s, n }) => ({ key: s, count: n }))} labelFor={(k) => `${STATUS_STYLE[k as keyof typeof STATUS_STYLE].symbol} ${ACCESSIBILITY_LABELS[k as keyof typeof ACCESSIBILITY_LABELS]}`} emptyText="Sin segmentos." />
       {allDemo ? <p className="text-demo">Todos los segmentos son simulados: el porcentaje de verificación real es 0% hasta que se incorporen inspecciones de campo.</p> : null}
+      {!allDemo && mostlyDemo ? (
+        <p className="text-demo">
+          Solo {m.realCount} de {m.total} tramos tienen una fuente real; el resto de estados son simulados. La geometría de todos los tramos proviene de OpenStreetMap.
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -1,15 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { buildDemoDataset } from '../../data/demo-dataset';
+import full from '../../data/pilot-dataset.json';
+import { toMobilityDataset } from '../../data/demo-dataset';
+import type { PilotDataset } from '../../types/domain';
 import { lineMidpoint, nearestEdge } from './geo';
 
 describe('nearestEdge / lineMidpoint', () => {
-  const ds = buildDemoDataset();
+  const ds = toMobilityDataset(full as unknown as PilotDataset);
   it('asocia un punto al tramo más cercano', () => {
-    const e = ds.edges.find((x) => x.id === 'e-h-r1c1')!;
+    const e = ds.edges.find((x) => x.lengthM > 60)!;
     const mid = lineMidpoint(e.geometry);
-    expect(nearestEdge(mid.lat + 0.00005, mid.lng, ds.edges)?.id).toBe('e-h-r1c1');
+    expect(nearestEdge(mid.lat, mid.lng, ds.edges)?.id).toBe(e.id);
   });
   it('no asocia puntos lejanos a ningún tramo', () => {
-    expect(nearestEdge(-9.95, -76.26, ds.edges)).toBeNull();
+    expect(nearestEdge(-9.99, -76.30, ds.edges)).toBeNull();
   });
 });

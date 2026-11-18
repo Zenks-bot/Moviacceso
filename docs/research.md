@@ -48,10 +48,12 @@ No afirmamos que todas las zonas de Huánuco presenten deficiencias.
 ## 4. Sector piloto y datos
 
 - **Sector:** centro urbano, alrededor de la Plaza de Armas de Huánuco.
-- **Coordenada de referencia** usada: −9.92975, −76.23985 (aproximada; **pendiente de contrastar** con OpenStreetMap, porque el entorno de desarrollo no tenía acceso a OSM).
-- **Grafo de demostración:** cuadrícula esquemática de 4 × 4 nodos (unos 110 m por cuadra), 25 segmentos más un componente aislado. No pretende coincidir con las calles reales.
-- **Lugares:** solo la Plaza de Armas como referencia real (con ubicación aproximada); el resto son destinos explícitamente ficticios («Destino demo A — centro de salud (ficticio)»). Los «paraderos demo» no son oficiales.
-- **Camino hacia datos reales:** `scripts/osm-to-dataset.ts` importa geometría de OSM como «información insuficiente»; la accesibilidad solo cambia tras una inspección registrada con fecha, fuente y metodología.
+- **Centro:** Plaza de Armas según OpenStreetMap (−9.929478, −76.239845).
+- **Grafo:** importado de OpenStreetMap (API 0.6, descarga del 18/11/2026, `data/osm/osm-api-centro.json`). Tiene 492 intersecciones y 703 tramos, la componente conexa principal de las vías transitables a pie.
+- **Estados de accesibilidad:** simulados en 702 tramos (asignados de forma determinista; las escaleras de OSM se marcan como barrera simulada). Un tramo, «Jr. San Martín, entre Jr. Pedro Puelles y Jr. Pedro Barroso», tiene fuente **oficial** (Contraloría, 2023). Su ubicación es aproximada (en OSM, el Jr. San Martín no cruza exactamente la Av. Alameda de la República) y su estado actual no está confirmado.
+- **Lugares:** 18 destinos reales con su nombre en OSM: Plaza de Armas, Municipalidad, mercados, centros de salud, instituciones educativas, comisaría y 3 terminales de buses interprovinciales. Su accesibilidad figura como «información insuficiente».
+- **Transporte público:** OSM no registra paradas urbanas de bus en el centro de Huánuco. Es una brecha de datos que el proyecto debe abordar (mapeo de paraderos con la comunidad).
+- **Regenerar:** `npm run pilot:build -- --download` y luego `npm run seed:generate`.
 
 ## 5. Supuestos pendientes de validar
 

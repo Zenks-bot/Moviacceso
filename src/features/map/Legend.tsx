@@ -27,7 +27,7 @@ export function Legend() {
           <span>Datos de demostración: información simulada, no evidencia real</span>
         </li>
       </ul>
-      <p className="mt-3 text-sm text-slate">Letras de los marcadores: S salud, E educación, C comercio, P punto de parada (no oficial), B biblioteca/servicio, ★ referencia.</p>
+      <p className="mt-3 text-sm text-slate">Letras de los marcadores: S salud, E educación, C comercio, P transporte (terminal o parada según OSM, no oficial), B servicio público, ★ espacio público. </p>
     </section>
   );
 }
